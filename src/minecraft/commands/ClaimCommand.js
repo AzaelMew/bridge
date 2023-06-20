@@ -42,7 +42,11 @@ async function getStatsFromUUID(name, profile) {
                 newlvl = data.data[b].sblevel
             }
         }
-        if (newlvl >= 240) {
+        if (newlvl >= 290) {
+            rank = "leg"
+            return rank
+        }
+        else if (newlvl >= 240) {
             rank = "champ"
             return rank
         }
@@ -73,6 +77,12 @@ class ClaimCommand extends MinecraftCommand {
         let args = message.split(" ")
         getStatsFromUsername(username, args[1]).then(rank => {
             console.log(rank)
+            if(rank == "leg") {
+                this.send(`/g setrank ${username} Legend`)
+                setTimeout(() => {
+                    this.send(`/gc ${username}'s rank has been set to Legend! If this is wrong, make sure you're on your main profile, and APIs are on!`)
+                }, 1000);
+            }
             if (rank == "champ") {
                 this.send(`/g setrank ${username} Champion`)
                 setTimeout(() => {

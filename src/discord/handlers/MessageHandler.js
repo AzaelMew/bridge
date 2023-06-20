@@ -1,6 +1,6 @@
 const imgur = require('imgur-anonymous-uploader');
 const uploader = new imgur("318214bc4f4717f");
-
+const axios = require('axios')
 
 
 class MessageHandler {
@@ -51,6 +51,7 @@ class MessageHandler {
       return
     }
     if(message.content.toLowerCase().includes("macro")) return;
+    axios.post('https://ws.azael.moe/', {username: `§b${message.member.displayName} §6[DISCORD]`, message: message.content})
     this.discord.broadcastMessage({
       username: message.member.displayName,
       message: this.stripDiscordContent(message.content),
