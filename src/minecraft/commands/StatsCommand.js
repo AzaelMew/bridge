@@ -36,6 +36,7 @@ async function getStatsFromUUID(name, profile) {
     if (profile == undefined) {
       profile = "a"
     }
+    if (name == "f03695547707486ab2308518f04102f7") return
     const { data } = await axios.get('http://192.168.100.197:3000/v1/profiles/' + name + '?key=77ac89bad625453facaa36457eb3cf5c')
     for (i = 0; i < Object.keys(data.data).length; i++) {
       if (data.data[i].name.toLowerCase() == profile.toLowerCase()) {

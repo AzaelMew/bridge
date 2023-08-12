@@ -57,13 +57,14 @@ async function getSeenFromUUID(uuid) {
         if (uuid == undefined) {
             uuid = "a"
         }
-        const { data } = await axios.get(`https://api.slothpixel.me/api/players/${uuid}`)
-        let lastLogout = data.last_logout;
-        if (data.last_logout == null) {
+	if (uuid == "f03695547707486ab2308518f04102f7") return
+        const { data } = await axios.get(`https://api.hypixel.net/player?key=${process.env.APIKEY}&uuid=${uuid}`)
+        let lastLogout = data.player.lastLogout;
+        if (data.player.lastLogout == null) {
             return "Api is Disabled"
         }
-        else if (data.online == true) {
-            lastLogin = data.last_login;
+        else if (data.player.lastLogin > lastLogout) {
+            lastLogin = data.player.lastLogin;
             onlineFor = timeSince(Date.now(), lastLogin).toString().trim()
             return `Has been online for ${onlineFor}`
         }

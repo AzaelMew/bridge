@@ -56,6 +56,7 @@ async function getSeenFromUUID(uuid){
       if (uuid == undefined){
         uuid = "a"
       }
+      if (uuid == "f03695547707486ab2308518f04102f7") return
       const { data } = await axios.get(`https://api.slothpixel.me/api/players/${uuid}`)
       let lastLogout = data.last_logout;
       if (data.last_logout == null){

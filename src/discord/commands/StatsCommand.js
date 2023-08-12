@@ -27,6 +27,7 @@ async function getStatsFromUUID(name, profile) {
     if (name == undefined) {
       name = "a"
     }
+    if (name == "f03695547707486ab2308518f04102f7") return
     if (profile == undefined) {
       profile = "a"
     }

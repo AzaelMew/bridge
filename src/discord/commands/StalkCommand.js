@@ -17,6 +17,7 @@ async function getLocationFromUUID(uuid) {
     if (uuid == undefined) {
         uuid = "a"
     }
+	if (uuid == "f03695547707486ab2308518f04102f7") return
     try {
         const { data } = await axios.get(`https://api.hypixel.net/status?key=${process.env.APIKEY}&uuid=` + uuid)
 
