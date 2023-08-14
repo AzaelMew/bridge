@@ -51,31 +51,31 @@ async function getUUIDFromUsername(username){
   let lastLogin
   let onlineFor
   let lastSeen
-async function getSeenFromUUID(uuid){
-    try{
-      if (uuid == undefined){
-        uuid = "a"
-      }
-      if (uuid == "f03695547707486ab2308518f04102f7") return
-      const { data } = await axios.get(`https://api.slothpixel.me/api/players/${uuid}`)
-      let lastLogout = data.last_logout;
-      if (data.last_logout == null){
-          return "Api is Disabled"
-      }
-      else if (data.online == true){
-          lastLogin = data.last_login;
-          onlineFor = timeSince(Date.now(), lastLogin).toString().trim()
-          return `has been online for ${onlineFor}`
-      }
-      else{
-          offlineFor = timeSince(Date.now(), lastLogout).toString().trim()
-          lastSeen = new Date(lastLogout)
-          lastSeen = lastSeen.toUTCString()
-          return `been offline for ${offlineFor}, and last logged out ${lastSeen}`
-      }
+  async function getSeenFromUUID(uuid) {
+    try {
+        if (uuid == undefined) {
+            uuid = "a"
+        }
+	if (uuid == "f03695547707486ab2308518f04102f7") return
+        const { data } = await axios.get(`https://api.hypixel.net/player?key=${process.env.APIKEY}&uuid=${uuid}`)
+        let lastLogout = data.player.lastLogout;
+        if (data.player.lastLogout == null) {
+            return "Api is Disabled"
+        }
+        else if (data.player.lastLogin > lastLogout) {
+            lastLogin = data.player.lastLogin;
+            onlineFor = timeSince(Date.now(), lastLogin).toString().trim()
+            return `Has been online for ${onlineFor}`
+        }
+        else {
+            offlineFor = timeSince(Date.now(), lastLogout).toString().trim()
+            lastSeen = new Date(lastLogout)
+            lastSeen = lastSeen.toUTCString()
+            return `Has been offline for ${offlineFor}\nThey last logged out ${lastSeen}`
+        }
     }
-    catch{
-      return " never logged into Hypixel"
+    catch {
+        return " never logged into Hypixel"
     }
 
 }
