@@ -15,6 +15,13 @@ Canvas.registerFont('./src/fonts/2_Minecraft-Italic.otf', { family: 'MinecraftIt
 Canvas.registerFont('./src/fonts/unifont.ttf', { family: 'MinecraftUnicode' });
 
 let reta = []
+let gmc = 0
+let ec = 0
+let lc = 0
+let cc = 0
+let kc = 0
+let rc = 0
+let bulletCount = 0;
 var ret = "";
 let mes = "";
 let reg = /(\[\w{3,}\+{0,2}\] )?(\w{1,16}) has invited you to join their party!/
@@ -385,7 +392,7 @@ class StateHandler extends EventHandler {
     if (this.isGuildRank(message)) {
       mes = reta
       reta = []
-      mes = mes.toString().replaceAll(",", " ").replaceAll("_", "\\_").replaceAll("-- ", "\n**").replaceAll(" --", "**")
+      mes = mes.toString().replaceAll("-- Guild Master --",`-- Guild Master ━ ${gmc} --`).replaceAll("-- Elder --",`-- Elder ━ ${ec} --`).replaceAll("-- Legend --",`-- Legend ━ ${lc} --`).replaceAll("-- Champion --",`-- Champion ━ ${cc} --`).replaceAll("-- Knight --",`-- Knight ━ ${kc} --`).replaceAll("-- Recruit --",`-- Recruit ━ ${rc} --`).replaceAll(",", " ").replaceAll("_", "\\_").replaceAll("-- ", "\n**").replaceAll(" --", "**")
       return this.minecraft.broadcastOnEmbed({ username: "Players currently online", message: mes })
     }
 
@@ -579,39 +586,52 @@ class StateHandler extends EventHandler {
   }
   isGuildRank(message) {
     if (message.endsWith('-- Guild Master --')) {
-      reta.push(message + "\n")
+      reta.push(message + "\n");
     }
-    if (message.endsWith(' ●')) {
-      reta.push(message + "\n")
+  
+    if (message.includes(' ●')) {
+      reta.push(message + "\n");
+      bulletCount += (message.match(/ ●/g) || []).length;
     }
+  
     if (message.endsWith('-- Elder --')) {
-      reta.push(message + "\n")
+      gmc = bulletCount
+      reta.push(message + "\n");
     }
-
+  
     if (message.endsWith('-- Legend --')) {
-      reta.push(message + "\n")
+      ec = bulletCount - gmc
+      reta.push(message + "\n");
     }
-
+  
     if (message.endsWith('-- Champion --')) {
-      reta.push(message + "\n")
+      lc = bulletCount - ec - gmc
+      reta.push(message + "\n");
     }
-
+  
     if (message.endsWith('-- Knight --')) {
-      reta.push(message + "\n")
+      cc= bulletCount - ec - gmc - lc
+      reta.push(message + "\n");
     }
-
+  
     if (message.endsWith('-- Recruit --')) {
-      reta.push(message + "\n")
+      kc = bulletCount - ec - gmc - lc - cc
+      reta.push(message + "\n");
     }
+  
     if (message.startsWith('Total Members:')) {
-      reta.push("\n" + message + "/125")
+      rc = bulletCount - ec - gmc - lc - cc - kc
+      reta.push("\n" + message + "/125");
     }
+  
     if (message.startsWith("Online Members")) {
-      reta.push("\n" + message)
-      return reta
+      reta.push("\n" + message);
+      console.log(gmc,ec,lc,cc,kc,rc)
+      bulletCount = 0
+      return reta;
     }
-
   }
+  
 
   isGTopMessage(message) {
     if (message.includes("Top Guild Experience")) {
