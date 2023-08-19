@@ -392,7 +392,7 @@ class StateHandler extends EventHandler {
     if (this.isGuildRank(message)) {
       mes = reta
       reta = []
-      mes = mes.toString().replaceAll("-- Guild Master --",`-- Guild Master ━ ${gmc} --`).replaceAll("-- Elder --",`-- Elder ━ ${ec} --`).replaceAll("-- Legend --",`-- Legend ━ ${lc} --`).replaceAll("-- Champion --",`-- Champion ━ ${cc} --`).replaceAll("-- Knight --",`-- Knight ━ ${kc} --`).replaceAll("-- Recruit --",`-- Recruit ━ ${rc} --`).replaceAll(",", " ").replaceAll("_", "\\_").replaceAll("-- ", "\n**").replaceAll(" --", "**")
+      mes = mes.toString().replaceAll("-- Guild Master --",`-- Guild Master ━ ${gmc} --`).replaceAll("-- Elder --",`-- Elder ━ ${ec} --`).replaceAll("-- Legend --",`-- Legend ━ ${lc} --`).replaceAll("-- Champion --",`-- Champion ━ ${cc} --`).replaceAll("-- Knight --",`-- Knight ━ ${kc} --`).replaceAll("-- Recruit --",`-- Recruit ━ ${rc} --`).replaceAll(",", " ").replaceAll("_", "\\_").replaceAll("-- ", "\n**").replaceAll(" --", "**").replaceAll("[MVP++]","").replaceAll("[MVP+]","").replaceAll("[MVP]","").replaceAll("[VIP+]","").replaceAll("[VIP]","")
       return this.minecraft.broadcastOnEmbed({ username: "Players currently online", message: mes })
     }
 
