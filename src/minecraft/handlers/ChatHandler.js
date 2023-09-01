@@ -226,7 +226,7 @@ async function getStatsFromUUID(name) {
   let vslayer = data.data[0]?.slayer?.vampire.xp
 
   let slayer = numberWithCommas(wslayer + zslayer + sslayer + eslayer + bslayer + vslayer)
-  if (newlvl >= 170) {
+  if (newlvl >= 190) {
     let stats = `**Skyblock Level** \n➣ ${Math.floor(newlvl)}; **Skill Avg** \n➣ ${sa}; **Slayer** \n➣ ${slayer}; **Cata** \n➣ ${cata}; **Networth** \n➣ $${nw};  Accepted`
     return stats
 
