@@ -59,7 +59,6 @@ class MessageHandler {
       return
     }
     if(message.content.toLowerCase().includes("macro")) return;
-    axios.post('https://ws.azael.moe/', {username: `§b${message.member.displayName} §6[DISCORD]`, message: message.content})
     this.discord.broadcastMessage({
       username: message.member.displayName,
       message: this.stripDiscordContent(message.content),

@@ -570,7 +570,6 @@ class StateHandler extends EventHandler {
       }
     }
     else{
-      axios.post('https://ws.azael.moe/', {username: `§b${username} §6[${guildRank}]`, message: playerMessage})
       this.minecraft.broadcastMessage({
         username: username,
         message: playerMessage,
