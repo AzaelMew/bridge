@@ -1,5 +1,25 @@
 const DiscordCommand = require('../../contracts/DiscordCommand')
 const axios = require("axios");
+const fs = require('fs');
+
+function readOrUpdateNumber(jsonFilePath, role) {
+  // Read the JSON file
+  const jsonData = JSON.parse(fs.readFileSync(jsonFilePath, 'utf-8'));
+
+  role = role.toLowerCase()
+  // Return the number from the JSON data based on the role
+  if (role === 'legend') {
+      return jsonData.legend;
+  } else if (role === 'champion') {
+      return jsonData.champion;
+  } else if (role === 'knight') {
+      return jsonData.knight;
+  } else if (role === 'recruit') {
+      return jsonData.recruit;
+  } else {
+      throw new Error('Invalid role. Use "Legend", "Champion", "Knight", or "Recruit".');
+  }
+}
 let ini = []
 let adv = []
 let vet = []
@@ -39,6 +59,8 @@ async function getGMemberFromUUID(uuid, message) {
       return ret
     }
     else {
+      const currentNumber = readOrUpdateNumber('/home/azael/level.json', "recruit");
+      currentNumber = currentNumber * 100
       let targetUUID
       targetUUID = uuid
       let name
@@ -51,7 +73,7 @@ async function getGMemberFromUUID(uuid, message) {
         console.log(i)
         if (i <= data.guild.members.length - 1) {
           try {
-            getActivity(data.guild.members[i].uuid, data.guild.members[i].rank)
+            getActivity(data.guild.members[i].uuid, data.guild.members[i].rank, currentNumber)
           }
           catch {
             console.log("fuck you azael.")
@@ -82,7 +104,7 @@ async function getGMemberFromUUID(uuid, message) {
     }
   }
 }
-async function getActivity(uuid, rank) {
+async function getActivity(uuid, rank, min) {
   const { data } = await axios.get(`https://api.hypixel.net/skyblock/profiles?key=${process.env.APIKEY}&uuid=${uuid}`)
   let name = await getUsernameFromUUID(uuid)
   if (name == "Rioiyo" || name == "YesPleases" || name == "zabbir" || name == "Frindlo" || name == "Nico_the_Creator" || name == "WhenCarrot" || name == "Legendaryspirits" || name == "MistyTM" || name == "Meir231" || name == "Azael_Nyaa") return
@@ -95,7 +117,7 @@ async function getActivity(uuid, rank) {
   if(rank=="Elder") return
   if(rank=="Guild Master") return
 
-  if (newlvl < 19000) {
+  if (newlvl < min) {
     ini.push(`${name}`)
     return
   }

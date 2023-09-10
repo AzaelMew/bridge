@@ -9,6 +9,25 @@ const imgur = require('imgur-anonymous-uploader');
 const { url } = require('inspector');
 const uploader = new imgur("318214bc4f4717f");
 
+function readOrUpdateNumber(jsonFilePath, role) {
+  // Read the JSON file
+  const jsonData = JSON.parse(fs.readFileSync(jsonFilePath, 'utf-8'));
+
+  role = role.toLowerCase()
+  // Return the number from the JSON data based on the role
+  if (role === 'legend') {
+      return jsonData.legend;
+  } else if (role === 'champion') {
+      return jsonData.champion;
+  } else if (role === 'knight') {
+      return jsonData.knight;
+  } else if (role === 'recruit') {
+      return jsonData.recruit;
+  } else {
+      throw new Error('Invalid role. Use "Legend", "Champion", "Knight", or "Recruit".');
+  }
+}
+
 Canvas.registerFont('./src/fonts/MinecraftRegular-Bmg3.ttf', { family: 'Minecraft' });
 Canvas.registerFont('./src/fonts/minecraft-bold.otf', { family: 'MinecraftBold' });
 Canvas.registerFont('./src/fonts/2_Minecraft-Italic.otf', { family: 'MinecraftItalic' });
@@ -199,6 +218,8 @@ async function getStatsFromUUID(name) {
   } else {
     console.log("User is safe.")
   }
+  const recruitLvL = readOrUpdateNumber('/home/azael/level.json' ,"recruit");
+
   const { data } = await axios.get('http://192.168.100.197:3000/v1/profiles/' + name + '?key=77ac89bad625453facaa36457eb3cf5c')
   let newlvl = 0
   for (b = 0; b < Object.keys(data.data).length; b++) {
@@ -226,7 +247,7 @@ async function getStatsFromUUID(name) {
   let vslayer = data.data[0]?.slayer?.vampire.xp
 
   let slayer = numberWithCommas(wslayer + zslayer + sslayer + eslayer + bslayer + vslayer)
-  if (newlvl >= 190) {
+  if (newlvl >= recruitLvL) {
     let stats = `**Skyblock Level** \n➣ ${Math.floor(newlvl)}; **Skill Avg** \n➣ ${sa}; **Slayer** \n➣ ${slayer}; **Cata** \n➣ ${cata}; **Networth** \n➣ $${nw};  Accepted`
     return stats
 

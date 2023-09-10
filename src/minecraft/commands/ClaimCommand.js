@@ -1,6 +1,28 @@
 const MinecraftCommand = require('../../contracts/MinecraftCommand')
 const axios = require("axios");
+const fs = require('fs');
+
 let rank
+
+function readOrUpdateNumber(jsonFilePath, role) {
+    // Read the JSON file
+    const jsonData = JSON.parse(fs.readFileSync(jsonFilePath, 'utf-8'));
+  
+    role = role.toLowerCase()
+    // Return the number from the JSON data based on the role
+    if (role === 'legend') {
+        return jsonData.legend;
+    } else if (role === 'champion') {
+        return jsonData.champion;
+    } else if (role === 'knight') {
+        return jsonData.knight;
+    } else if (role === 'recruit') {
+        return jsonData.recruit;
+    } else {
+        throw new Error('Invalid role. Use "Legend", "Champion", "Knight", or "Recruit".');
+    }
+  }
+
 function numberWithCommas(x) {
     x = x.toString().split(".")[0]
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -24,6 +46,10 @@ async function getUUIDFromUsername(username) {
     }
 }
 async function getStatsFromUUID(name, profile) {
+    let legend = readOrUpdateNumber('/home/azael/level.json' ,"legend");
+    let champion = readOrUpdateNumber('/home/azael/level.json' ,"champion");
+    let knight = readOrUpdateNumber('/home/azael/level.json' ,"knight");
+
     try {
         if (name == undefined) {
             name = "a"
@@ -36,21 +62,23 @@ async function getStatsFromUUID(name, profile) {
             return rank
         }
         const { data } = await axios.get('http://192.168.100.197:3000/v2/profiles/' + name + '?key=77ac89bad625453facaa36457eb3cf5c')
+
+        
         let newlvl = 0
         for (b = 0; b < Object.keys(data.data).length; b++) {
             if (newlvl < data.data[b].sblevel) {
                 newlvl = data.data[b].sblevel
             }
         }
-        if (newlvl >= 290) {
+        if (newlvl >= legend) {
             rank = "leg"
             return rank
         }
-        else if (newlvl >= 250) {
+        else if (newlvl >= champion) {
             rank = "champ"
             return rank
         }
-        else if (newlvl >= 210) {
+        else if (newlvl >= knight) {
             rank = "vet"
             return rank
         }
@@ -76,7 +104,6 @@ class ClaimCommand extends MinecraftCommand {
     async onCommand(username, message) {
         let args = message.split(" ")
         getStatsFromUsername(username, args[1]).then(rank => {
-            console.log(rank)
             if(rank == "leg") {
                 this.send(`/g setrank ${username} Legend`)
                 setTimeout(() => {
@@ -101,9 +128,6 @@ class ClaimCommand extends MinecraftCommand {
                     this.send(`/gc ${username}'s rank has been set to Recruit! If this is wrong, make sure you're on your main profile, and APIs are on!`)
                 }, 1000);
             }
-            else (
-                this.send(`/gc ${rank}`)
-            )
         })
     }
 }

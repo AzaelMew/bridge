@@ -1,5 +1,25 @@
 const DiscordCommand = require('../../contracts/DiscordCommand')
 const axios = require("axios");
+const fs = require('fs');
+function readOrUpdateNumber(jsonFilePath, role) {
+  // Read the JSON file
+  const jsonData = JSON.parse(fs.readFileSync(jsonFilePath, 'utf-8'));
+
+  role = role.toLowerCase()
+  // Return the number from the JSON data based on the role
+  if (role === 'legend') {
+      return jsonData.legend;
+  } else if (role === 'champion') {
+      return jsonData.champion;
+  } else if (role === 'knight') {
+      return jsonData.knight;
+  } else if (role === 'recruit') {
+      return jsonData.recruit;
+  } else {
+      throw new Error('Invalid role. Use "Legend", "Champion", "Knight", or "Recruit".');
+  }
+}
+
 let ini = []
 let adv = []
 let vet = []
@@ -90,6 +110,14 @@ async function getGMemberFromUUID(uuid, message) {
   }
 }
 async function getActivity(uuid, rank, xp) {
+  let legend = readOrUpdateNumber('/home/azael/level.json' ,"legend");
+  let champion = readOrUpdateNumber('/home/azael/level.json' ,"champion");
+  let knight = readOrUpdateNumber('/home/azael/level.json' ,"knight");
+  
+  legend = legend * 100
+  champion = champion * 100
+  knight = knight * 100
+
   const { data } = await axios.get(`https://api.hypixel.net/skyblock/profiles?key=${process.env.APIKEY}&uuid=${uuid}`)
   let name = await getUsernameFromUUID(uuid)
   let newlvl = 0
@@ -102,19 +130,19 @@ async function getActivity(uuid, rank, xp) {
 
   if(rank=="Elder") return;
   if(rank=="Guild Master") return;
-  if (newlvl >= 29000) {
+  if (newlvl >= legend) {
     if(rank=="Legend") return
     ini.push(`${name} Legend`)
     console.log(ini)
     return
   };
-  if (newlvl >= 25000) {
+  if (newlvl >= champion) {
     if(rank=="Champion") return
     ini.push(`${name} Champion`)
     console.log(ini)
     return
   }
-  else if (newlvl >= 21000) {
+  else if (newlvl >= knight) {
     if(rank=="Knight") return
     ini.push(`${name} Knight`)
     console.log(ini)

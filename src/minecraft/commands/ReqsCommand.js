@@ -1,4 +1,5 @@
 const MinecraftCommand = require('../../contracts/MinecraftCommand')
+const fs = require('fs');
 
 class ReqsCommand extends MinecraftCommand {
   constructor(minecraft) {
@@ -10,7 +11,31 @@ class ReqsCommand extends MinecraftCommand {
   }
 
   onCommand(username, message) {
-    this.send(`/gc Rank Requirements; Recruit - Skyblock Level 190 | Knight - Skyblock Level 220 | Champion - Skyblock Level 260 | Legend - Skyblock Level 310`)
+    function readOrUpdateNumber(jsonFilePath, role) {
+      // Read the JSON file
+      const jsonData = JSON.parse(fs.readFileSync(jsonFilePath, 'utf-8'));
+
+      role = role.toLowerCase()
+      // Return the number from the JSON data based on the role
+      if (role === 'legend') {
+        return jsonData.legend;
+      } else if (role === 'champion') {
+        return jsonData.champion;
+      } else if (role === 'knight') {
+        return jsonData.knight;
+      } else if (role === 'recruit') {
+        return jsonData.recruit;
+      } else {
+        throw new Error('Invalid role. Use "Legend", "Champion", "Knight", or "Recruit".');
+      }
+    }
+    const recruit = readOrUpdateNumber('/home/azael/level.json', "recruit");
+    const knight = readOrUpdateNumber('/home/azael/level.json', "knight");
+    const champion = readOrUpdateNumber('/home/azael/level.json', "champion");
+    const legend = readOrUpdateNumber('/home/azael/level.json', "legend");
+
+
+    this.send(`/gc Rank Requirements; Recruit - Skyblock Level ${recruit} | Knight - Skyblock Level ${knight} | Champion - Skyblock Level ${champion} | Legend - Skyblock Level ${legend}`)
   }
 }
 
