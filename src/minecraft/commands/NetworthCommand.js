@@ -15,6 +15,7 @@ function numberWithCommas(number) {
   if (number < 1) {
     return 0
   }
+  number = number.toFixed(0);
   decPlaces = 1
   decPlaces = Math.pow(10,decPlaces);
   var abbrev = [ "k", "m", "b", "t" ];
