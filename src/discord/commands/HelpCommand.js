@@ -1,5 +1,33 @@
 const DiscordCommand = require('../../contracts/DiscordCommand')
+const fs = require('fs');
+function incrementNumberInJSON(itemName) {
+  // Set the file path for the JSON file
+  const jsonFilePath = '/home/azael/bridge/data.json';
 
+  // Read the existing JSON file or create an empty object
+  let jsonData = {};
+  try {
+      const jsonString = fs.readFileSync(jsonFilePath, 'utf8');
+      jsonData = JSON.parse(jsonString);
+  } catch (error) {
+      // File does not exist or is not valid JSON, create an empty object
+      console.error('Error reading JSON file:', error.message);
+  }
+
+  // Get the current number for the specified item or default to 0
+  const currentNumber = jsonData[itemName] || 0;
+
+  // Increment the number by 1
+  const newNumber = currentNumber + 1;
+
+  // Update the JSON with the new number
+  jsonData[itemName] = newNumber;
+
+  // Write the updated JSON back to the file
+  fs.writeFileSync(jsonFilePath, JSON.stringify(jsonData, null, 2), 'utf8');
+
+  console.log(`Number incremented for item "${itemName}". New number: ${newNumber}`);
+}
 const { version } = require('../../../package.json')
 
 class HelpCommand extends DiscordCommand {
@@ -12,6 +40,7 @@ class HelpCommand extends DiscordCommand {
   }
 
   onCommand(message) {
+  incrementNumberInJSON("DCHelpCommandCount")
     let discordCommands = []
     let minecraftCommands = []
 
@@ -39,10 +68,6 @@ class HelpCommand extends DiscordCommand {
           {
             name: 'Staff Commands',
             value: `These commands can only be used by staff members.\n\n\`!invite\`: Invites players to the guild.\n\`!setrank\`: Promote or Demote members to a rank.\n\`!kick\`: Kicks a player from the guild\n\`!mute\`: Mutes a player for a specified amount of time\n\`!unmute\`: Unmutes a player from the specified amount of time.\n\`!member\`: Shows weekly Guild EXP of a specified member.\n\`!relog\`: Reboots the bot's minecraft client.\n\`!kickinactive\`: Kicks people who have not logged on for 25 days.`
-          },
-          {
-            name: 'Frag Bot Guide',
-            value: `Party our Guild's Bridge Bot through:\n\`/p TempestBridge\`\n\nOnce it joins your party, you have 60 seconds to join any activity in SkyBlock which requires a bot account.`
           },
           {
             name: `Info`,

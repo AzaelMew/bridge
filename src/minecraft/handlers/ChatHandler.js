@@ -8,7 +8,35 @@ const Canvas = require('canvas');
 const imgur = require('imgur-anonymous-uploader');
 const { url } = require('inspector');
 const uploader = new imgur("318214bc4f4717f");
+let onCount = 1
+function incrementNumberInJSON(itemName) {
+  // Set the file path for the JSON file
+  const jsonFilePath = '/home/azael/bridge/data.json';
 
+  // Read the existing JSON file or create an empty object
+  let jsonData = {};
+  try {
+      const jsonString = fs.readFileSync(jsonFilePath, 'utf8');
+      jsonData = JSON.parse(jsonString);
+  } catch (error) {
+      // File does not exist or is not valid JSON, create an empty object
+      console.error('Error reading JSON file:', error.message);
+  }
+
+  // Get the current number for the specified item or default to 0
+  const currentNumber = jsonData[itemName] || 0;
+
+  // Increment the number by 1
+  const newNumber = currentNumber + 1;
+
+  // Update the JSON with the new number
+  jsonData[itemName] = newNumber;
+
+  // Write the updated JSON back to the file
+  fs.writeFileSync(jsonFilePath, JSON.stringify(jsonData, null, 2), 'utf8');
+
+  console.log(`Number incremented for item "${itemName}". New number: ${newNumber}`);
+}
 function readOrUpdateNumber(jsonFilePath, role) {
   // Read the JSON file
   const jsonData = JSON.parse(fs.readFileSync(jsonFilePath, 'utf-8'));
@@ -16,15 +44,15 @@ function readOrUpdateNumber(jsonFilePath, role) {
   role = role.toLowerCase()
   // Return the number from the JSON data based on the role
   if (role === 'legend') {
-      return jsonData.legend;
+    return jsonData.legend;
   } else if (role === 'champion') {
-      return jsonData.champion;
+    return jsonData.champion;
   } else if (role === 'knight') {
-      return jsonData.knight;
+    return jsonData.knight;
   } else if (role === 'recruit') {
-      return jsonData.recruit;
+    return jsonData.recruit;
   } else {
-      throw new Error('Invalid role. Use "Legend", "Champion", "Knight", or "Recruit".');
+    throw new Error('Invalid role. Use "Legend", "Champion", "Knight", or "Recruit".');
   }
 }
 
@@ -218,7 +246,7 @@ async function getStatsFromUUID(name) {
   } else {
     console.log("User is safe.")
   }
-  const recruitLvL = readOrUpdateNumber('/home/azael/level.json' ,"recruit");
+  const recruitLvL = readOrUpdateNumber('/home/azael/level.json', "recruit");
 
   const { data } = await axios.get('http://192.168.100.197:3000/v1/profiles/' + name + '?key=77ac89bad625453facaa36457eb3cf5c')
   let newlvl = 0
@@ -279,39 +307,6 @@ class StateHandler extends EventHandler {
       return this.bot.chat('§')
     }
 
-    if (this.isPartyMessage(message)) {
-      return this.bot.chat("/p leave")
-    }
-
-    if (this.isPartyMessage2(message)) {
-      res = message.match(reg)
-      let userp = res[2]
-      getGMemberFromUsername(userp).then(ret => {
-        if (ret == "join") {
-          ret = ""
-          inParty = true
-
-          setTimeout(() => {
-            if (inParty) {
-              this.bot.chat(`/p leave`)
-            }
-          }, 60000)
-          console.log(`Joined the party of ${userp}`)
-          this.minecraft.broadcastLogEmbed({ username: userp, message: `Partied the bot.`, color: 0x0000FF })
-          return this.bot.chat(`/p join ${userp}`)
-        }
-        else {
-          return
-        }
-      })
-    }
-    if (this.isChichman(message)) {
-      return this.bot.chat("/p join chichman11")
-    }
-    if (this.isShana(message)) {
-      return this.bot.chat("/p join shana_splatoon")
-    }
-
     if (this.isLoginMessage(message)) {
       let user = message.split('>')[1].trim().split('joined.')[0].trim()
 
@@ -340,6 +335,10 @@ class StateHandler extends EventHandler {
         icon: `https://mc-heads.net/avatar/${user}`,
         color: 0x47F049
       })
+    }
+
+    if (this.isShana(message)) {
+      this.bot.chat("/p join azael_nya")
     }
 
     if (this.isApplyMessage(message)) {
@@ -413,7 +412,133 @@ class StateHandler extends EventHandler {
     if (this.isGuildRank(message)) {
       mes = reta
       reta = []
-      mes = mes.toString().replaceAll("-- Guild Master --",`-- Guild Master ━ ${gmc} --`).replaceAll("-- Elder --",`-- Elder ━ ${ec} --`).replaceAll("-- Legend --",`-- Legend ━ ${lc} --`).replaceAll("-- Champion --",`-- Champion ━ ${cc} --`).replaceAll("-- Knight --",`-- Knight ━ ${kc} --`).replaceAll("-- Recruit --",`-- Recruit ━ ${rc} --`).replaceAll(",", " ").replaceAll("_", "\\_").replaceAll("-- ", "\n**").replaceAll(" --", "**").replaceAll("[MVP++]","").replaceAll("[MVP+]","").replaceAll("[MVP]","").replaceAll("[VIP+]","").replaceAll("[VIP]","")
+      let gmc2
+      let ec2
+      let lc2
+      let cc2
+      let kc2
+      let rc2
+      if (mes.toString().includes("-- Guild Master --")) {
+        gmc2 = gmc
+        console.log(gmc, ec, lc, cc, kc, rc)
+        console.log(gmc2, ec2, lc2, cc2, kc2, rc2)
+      } else {
+        if (mes.toString().includes("-- Elder --")) {
+          ec2 = gmc
+        } else {
+          if (mes.toString().includes("-- Legend --")) {
+            lc2 = gmc
+          } else {
+            if (mes.toString().includes("-- Champion --")) {
+              cc2 = gmc
+            } else {
+              if (mes.toString().includes("-- Knight --")) {
+                kc2 = gmc
+              } else {
+                if (mes.toString().includes("-- Recruit --")) {
+                  rc2 = gmc
+                }
+              }
+            }
+          }
+        }
+      }
+      if (mes.toString().includes("-- Elder --")) {
+        console.log("e",gmc, ec, lc, cc, kc, rc)
+        console.log(gmc2, ec2, lc2, cc2, kc2, rc2)
+        if (ec2 == undefined) {
+          ec2 = ec
+        } else {
+          if (mes.toString().includes("-- Legend --")) {
+            lc2 = ec
+          } else {
+            if (mes.toString().includes("-- Champion --")) {
+              console.log(ec,cc2)
+              cc2 = ec
+            } else {
+              if (mes.toString().includes("-- Knight --")) {
+                kc2 = ec
+              } else {
+                if (mes.toString().includes("-- Recruit --")) {
+                  rc2 = ec
+                }
+              }
+            }
+          }
+        }
+      } else {
+        lc2 = ec
+        console.log("this happened?")
+      }
+      if (mes.toString().includes("-- Legend --")) {
+        console.log(gmc, ec, lc, cc, kc, rc)
+        console.log("l",gmc2, ec2, lc2, cc2, kc2, rc2)
+        if (lc2 == undefined) {
+          lc2 = lc
+        } else {
+          if (mes.toString().includes("-- Champion --")) {
+            cc2 = lc
+          } else {
+            if (mes.toString().includes("-- Knight --")) {
+              kc2 = lc
+            } else {
+              if (mes.toString().includes("-- Recruit --")) {
+                rc2 = lc
+              }
+            }
+          }
+        }
+      } else {
+        console.log("aaaaaaaaaaaaa",cc,lc,cc2,lc2)
+        cc2 = lc
+      }
+      if (mes.toString().includes("-- Champion --")) {
+        console.log(gmc, ec, lc, cc, kc, rc)
+        console.log("c",gmc2, ec2, lc2, cc2, kc2, rc2)
+        console.log("this",kc2,kc)
+        console.log(cc2)
+        if (cc2 == undefined) {
+          cc2 = cc
+          console.log(cc2)
+        } else {
+          if (mes.toString().includes("-- Knight --")) {
+            kc2 = cc
+          } else {
+            if (mes.toString().includes("-- Recruit --")) {
+              rc2 = cc
+            }
+          }
+        }
+        console.log("that",kc2,kc)
+      } else {
+        kc2 = cc
+      }
+      if (mes.toString().includes("-- Knight --")) {
+        console.log(gmc, ec, lc, cc, kc, rc)
+        console.log("k",gmc2, ec2, lc2, cc2, kc2, rc2)
+        if (kc2 == undefined) {
+          kc2 = kc
+        } else {
+          if (mes.toString().includes("-- Recruit --")) {
+            rc2 = kc
+          }
+        }
+      } else {
+        rc2 = kc
+      }
+      if (mes.toString().includes("-- Recruit --")) {
+        console.log(gmc, ec, lc, cc, kc, rc)
+        console.log("r",gmc2, ec2, lc2, cc2, kc2, rc2)
+        if (rc2 == undefined) rc2 = rc
+      }
+
+      mes = mes.toString().replaceAll("-- Guild Master --", `-- Guild Master ━ ${gmc2} --`).replaceAll("-- Elder --", `-- Elder ━ ${ec2} --`).replaceAll("-- Legend --", `-- Legend ━ ${lc2} --`).replaceAll("-- Champion --", `-- Champion ━ ${cc2} --`).replaceAll("-- Knight --", `-- Knight ━ ${kc2} --`).replaceAll("-- Recruit --", `-- Recruit ━ ${rc2} --`).replaceAll(",", " ").replaceAll("_", "\\_").replaceAll("-- ", "\n**").replaceAll(" --", "**").replaceAll("[MVP++]", "").replaceAll("[MVP+]", "").replaceAll("[MVP]", "").replaceAll("[VIP+]", "").replaceAll("[VIP]", "")
+      gmc = 0
+      ec = 0
+      lc = 0
+      cc = 0
+      kc = 0
+      rc = 0
       return this.minecraft.broadcastOnEmbed({ username: "Players currently online", message: mes })
     }
 
@@ -517,6 +642,7 @@ class StateHandler extends EventHandler {
       if (playerMessage == '@') {
         return
       }
+      incrementNumberInJSON("MCOfficerMessageCount")
       this.minecraft.broadcastOfficerMessage({
         username: username,
         message: playerMessage,
@@ -546,6 +672,8 @@ class StateHandler extends EventHandler {
     const playerMessage = parts.join(':').trim()
 
     if (message.includes("!8ball")) {
+      incrementNumberInJSON("MCEightballMessageCount")
+
       this.minecraft.broadcastMessage({
         username: username,
         message: playerMessage.replace("!8ball ", ""),
@@ -560,10 +688,12 @@ class StateHandler extends EventHandler {
     if (playerMessage == '@') {
       return
     }
-    if (message.includes("i.imgur.com") || message.includes("cdn.discordapp.com/attachments")){
+    if (message.includes("i.imgur.com") || message.includes("cdn.discordapp.com/attachments")) {
+      incrementNumberInJSON("MCImageMessageCount")
+
       let regex = /(?:^|\s)((?:(?:https?|ftp):\/\/|www\.)\S+(?:\b|$))/gm
       let url = message.match(regex)
-      let newplayerMessage = playerMessage.replaceAll(url[0]," ")
+      let newplayerMessage = playerMessage.replaceAll(url[0], " ")
       this.minecraft.broadcastTextEmbed({
         username: username,
         message: newplayerMessage,
@@ -574,11 +704,11 @@ class StateHandler extends EventHandler {
     }
     if (this.isSoopyMessage(message)) {
       const regex = /\[ITEM:(\d+)\]/g;
-        if (regex.test(message)) {
+      if (regex.test(message)) {
         console.log(message)
         let itemNumber = message.match(regex);
-        let newplayerMessage = playerMessage.replace(itemNumber,"")
-        itemNumber = itemNumber.toString().replace("[ITEM:","").replace("]","")
+        let newplayerMessage = playerMessage.replace(itemNumber, "")
+        itemNumber = itemNumber.toString().replace("[ITEM:", "").replace("]", "")
         getItemLore(itemNumber).then(responseurl => {
           this.minecraft.broadcastTextEmbed({
             username: username,
@@ -590,7 +720,9 @@ class StateHandler extends EventHandler {
         })
       }
     }
-    else{
+    else {
+      incrementNumberInJSON("MCGuildMessageCount")
+
       this.minecraft.broadcastMessage({
         username: username,
         message: playerMessage,
@@ -608,50 +740,69 @@ class StateHandler extends EventHandler {
     if (message.endsWith('-- Guild Master --')) {
       reta.push(message + "\n");
     }
-  
+
     if (message.includes(' ●')) {
       reta.push(message + "\n");
       bulletCount += (message.match(/ ●/g) || []).length;
+      if (onCount == 6) {
+        rc = bulletCount - ec - gmc - lc - cc - kc
+      }
+      if (onCount == 5) {
+        kc = bulletCount - ec - gmc - lc - cc
+      }
+      if (onCount == 4) {
+        cc = bulletCount - ec - gmc - lc
+      }
+      if (onCount == 3) {
+        lc = bulletCount - ec - gmc
+      }
+      if (onCount == 2) {
+        ec = bulletCount - gmc
+      }
+      if (onCount == 1) {
+        gmc = bulletCount
+      }
+      onCount = onCount + 1
+
     }
-  
+
     if (message.endsWith('-- Elder --')) {
-      gmc = bulletCount
       reta.push(message + "\n");
     }
-  
+
     if (message.endsWith('-- Legend --')) {
-      ec = bulletCount - gmc
       reta.push(message + "\n");
+
     }
-  
+
     if (message.endsWith('-- Champion --')) {
-      lc = bulletCount - ec - gmc
       reta.push(message + "\n");
+
     }
-  
+
     if (message.endsWith('-- Knight --')) {
-      cc= bulletCount - ec - gmc - lc
       reta.push(message + "\n");
+
     }
-  
+
     if (message.endsWith('-- Recruit --')) {
-      kc = bulletCount - ec - gmc - lc - cc
       reta.push(message + "\n");
+
     }
-  
+
     if (message.startsWith('Total Members:')) {
-      rc = bulletCount - ec - gmc - lc - cc - kc
       reta.push("\n" + message + "/125");
     }
-  
+
     if (message.startsWith("Online Members")) {
       reta.push("\n" + message);
-      console.log(gmc,ec,lc,cc,kc,rc)
+      console.log(gmc, ec, lc, cc, kc, rc)
       bulletCount = 0
+      onCount = 1
       return reta;
     }
   }
-  
+
 
   isGTopMessage(message) {
     if (message.includes("Top Guild Experience")) {
@@ -702,7 +853,7 @@ class StateHandler extends EventHandler {
     return message.includes("chichman11 has invited you to join their party!")
   }
   isShana(message) {
-    return message.includes("Shana_Splatoon has invited you to join their party!")
+    return message.includes("Azael_Nya has invited you to join their party!")
   }
 
   isOnlineMessage(message) {
