@@ -68,12 +68,12 @@ async function getNeko() {
 });
 }
 
-class CatCommand extends DiscordCommand {
+class CaatCommand extends DiscordCommand {
   constructor(discord) {
     super(discord)
 
-    this.name = 'cat'
-    this.description = 'cat'
+    this.name = 'caat'
+    this.description = 'caat'
   }
 
   onCommand(message) {
@@ -96,7 +96,7 @@ class CatCommand extends DiscordCommand {
         message.channel.send({
           embeds: [{
               image: {
-                  url: neko,
+                  url: "https://cdn.discordapp.com/attachments/903390012584894484/1210345290318483547/Longcat_is_loooooooooong.png?ex=65ea38e4&is=65d7c3e4&hm=814e98b2c0eb0763d9adc5184e3e4cba3246694f2c49a8cd18354e46c9890a9a&",
                 },
               color: 0x2A2A2A,
               timestamp: new Date(),
@@ -110,4 +110,4 @@ class CatCommand extends DiscordCommand {
   }
 }
 
-module.exports = CatCommand
+module.exports = CaatCommand

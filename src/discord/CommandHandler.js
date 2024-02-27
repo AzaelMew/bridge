@@ -73,7 +73,7 @@ class CommandHandler {
           }]
         })
       }
-      else if (command.name == "help" || command.name == "top" || command.name == "online"|| command.name == "stalk"|| command.name == "stats"|| command.name == "skills"|| command.name == "cata"|| command.name == "networth"|| command.name == "joke"|| command.name == "contest"|| command.name == "seen"|| command.name == "render"|| command.name == "slayer"){
+      else if (command.name == "cat" || command.name == "help" || command.name == "top" || command.name == "online"|| command.name == "stalk"|| command.name == "stats"|| command.name == "skills"|| command.name == "cata"|| command.name == "networth"|| command.name == "joke"|| command.name == "contest"|| command.name == "seen"|| command.name == "render"|| command.name == "slayer" || command.name == "8ball"){
         this.discord.app.log.discord(`[${command.name}] ${message.content}`)
         command.onCommand(message)
   
