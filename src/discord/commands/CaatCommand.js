@@ -6,7 +6,7 @@ const filename = 'lastCalledTime.txt'
 let lastRun
 function incrementNumberInJSON(itemName) {
   // Set the file path for the JSON file
-  const jsonFilePath = '/home/azael/bridge/data.json';
+  const jsonFilePath = '../../data.json';
 
   // Read the existing JSON file or create an empty object
   let jsonData = {};

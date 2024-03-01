@@ -11,7 +11,7 @@ const uploader = new imgur("318214bc4f4717f");
 let onCount = 1
 function incrementNumberInJSON(itemName) {
   // Set the file path for the JSON file
-  const jsonFilePath = '/home/azael/bridge/data.json';
+  const jsonFilePath = '../../data.json';
 
   // Read the existing JSON file or create an empty object
   let jsonData = {};
